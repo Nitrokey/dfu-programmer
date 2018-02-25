@@ -2,7 +2,7 @@
 #define __DFU_DEVICE_H__
 
 #if HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include <stdint.h>
 #ifdef HAVE_LIBUSB_1_0

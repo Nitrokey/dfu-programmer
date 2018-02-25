@@ -27,4 +27,11 @@
 
 int32_t execute_command( dfu_device_t *device,
                          struct programmer_arguments *args );
+int32_t execute_launch( dfu_device_t *device,
+                               struct programmer_arguments *args );
+int32_t execute_erase( dfu_device_t *device,
+                              struct programmer_arguments *args );
+int32_t execute_flash( dfu_device_t *device,
+                              struct programmer_arguments *args );
+
 #endif

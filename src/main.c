@@ -18,8 +18,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
+
+#include "lib_implementation.h"
+
 #if HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #include <stdio.h>
 #include <string.h>
@@ -36,14 +39,18 @@
 #include "arguments.h"
 #include "commands.h"
 
-
-int debug;
+extern int debug;
 #ifdef HAVE_LIBUSB_1_0
-libusb_context *usbcontext;
+extern libusb_context *usbcontext;
 #endif
+
 
 int main( int argc, char **argv )
 {
+  if (argc==3)
+    printf("\n%d %s %s %s\n\n\n", argc, argv[0], argv[1], argv[2]);
+
+
     static const char *progname = PACKAGE;
     int retval = SUCCESS;
     int status;

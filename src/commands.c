@@ -69,7 +69,7 @@ static void security_message( void ) {
     }
 }
 
-static int32_t execute_erase( dfu_device_t *device,
+int32_t execute_erase( dfu_device_t *device,
                               struct programmer_arguments *args ) {
     int32_t result = SUCCESS;
 
@@ -347,7 +347,7 @@ error:
     return retval;
 }
 
-static int32_t execute_flash( dfu_device_t *device,
+int32_t execute_flash( dfu_device_t *device,
                                 struct programmer_arguments *args ) {
     int32_t  retval = UNSPECIFIED_ERROR;
     int32_t  result;
@@ -910,7 +910,7 @@ static int32_t execute_configure( dfu_device_t *device,
     return 0;
 }
 
-static int32_t execute_launch( dfu_device_t *device,
+int32_t execute_launch( dfu_device_t *device,
                                   struct programmer_arguments *args ) {
     if( args->device_type & GRP_STM32 ) {
         return stm32_start_app( device, args->quiet );

@@ -22,7 +22,7 @@
 #define __DFU_H__
 
 #if HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 #ifdef HAVE_LIBUSB_1_0
 #include <libusb.h>
