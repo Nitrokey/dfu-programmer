@@ -22,8 +22,11 @@
 #ifdef _DEBUG
 int debug = 1000;
 #else
-int debug = 0;
+int debug = 250;
 #endif
+
+FILE* log_file = NULL;
+
 
 #ifdef HAVE_LIBUSB_1_0
 libusb_context *usbcontext;
@@ -131,14 +134,20 @@ int deinit(){
 #ifdef HAVE_LIBUSB_1_0
   libusb_exit(usbcontext);
 #endif
+
+  if (log_file != NULL) fclose(log_file);
 }
 
 int init(){
+  if (debug>0)
+    log_file = fopen("dfu-programmer.log", "a+");
+
   init_usb();
 
   if(!init_short()){
     printf("Error in init - check device access privileges. Run with sudo?\n");
     close_device();
+    if (log_file != NULL) fflush(log_file);
     return 1;
   }
   return 0;
@@ -155,6 +164,8 @@ int32_t launch(){
 
   pre_command_launch();
   int32_t ret = execute_launch(&dfu_device, &args);
+  if (log_file != NULL) fflush(log_file);
+
   if (ret != 0) return ret;
 
   return RET_SUCCESS;
@@ -173,6 +184,7 @@ int32_t erase(){
 
   pre_command_launch();
   int32_t ret = execute_erase(&dfu_device, &args);
+  if (log_file != NULL) fflush(log_file);
   if (ret != 0) return ret;
 
   return RET_SUCCESS;
@@ -201,6 +213,7 @@ int32_t flash(const char *firmware_path) {
 
   pre_command_launch();
   int32_t ret = execute_flash(&dfu_device, &args);
+  if (log_file != NULL) fflush(log_file);
   if (ret != 0) return ret;
 
   return RET_SUCCESS;

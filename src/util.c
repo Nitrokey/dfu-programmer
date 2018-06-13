@@ -24,16 +24,19 @@
 #include "util.h"
 
 extern int debug;       /* defined in main.c */
+extern FILE* log_file;       /* defined in main.c */
 
 void dfu_debug( const char *file, const char *function, const int line,
                 const int level, const char *format, ... )
 {
     if( level < debug ) {
+        if (log_file==NULL) return;
+
         va_list va_arg;
 
         va_start( va_arg, format );
-        fprintf( stderr, "%s:%d: ", file, line );
-        vfprintf( stderr, format, va_arg );
+        fprintf( log_file, "%s:%d: ", file, line );
+        vfprintf( log_file, format, va_arg );
         va_end( va_arg );
     }
 }

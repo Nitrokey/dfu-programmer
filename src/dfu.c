@@ -333,6 +333,7 @@ struct libusb_device *dfu_device_init( const uint32_t vendor,
 
 retry:
     devicecount = libusb_get_device_list( usbcontext, &list );
+    DEBUG( "Iterating through %2d found devices\n", (int) devicecount);
 
     for( i = 0; i < devicecount; i++ ) {
         libusb_device *device = list[i];
@@ -363,22 +364,25 @@ retry:
             if( 0 <= tmp ) {    /* The interface is valid. */
                 dfu_device->interface = tmp;
 
-                if( 0 == libusb_open(device, &dfu_device->handle) ) {
+                int err_code = 0;
+                if( 0 == (err_code = libusb_open(device, &dfu_device->handle)) ) {
                     DEBUG( "opened interface %d...\n", tmp );
-                    if( 0 == libusb_set_configuration(dfu_device->handle, 1) ) {
+                    if( 0 == (err_code = libusb_set_configuration(dfu_device->handle, 1)) ) {
                         DEBUG( "set configuration %d...\n", 1 );
-                        if( 0 == libusb_claim_interface(dfu_device->handle, dfu_device->interface) )
+                        if( 0 == (err_code = libusb_claim_interface(dfu_device->handle, dfu_device->interface)) )
                         {
                             DEBUG( "claimed interface %d...\n", dfu_device->interface );
 
                             switch( dfu_make_idle(dfu_device, initial_abort) )
                             {
                                 case 0:
+                                    DEBUG( "*** Success. Return.\n" );
                                     libusb_free_device_list( list, 1 );
                                     return device;
 
                                 case 1:
                                     retries--;
+                                    DEBUG( "*** Decrease retry.\n" );
                                     libusb_free_device_list( list, 1 );
                                     goto retry;
                             }
@@ -387,13 +391,15 @@ retry:
                             libusb_release_interface( dfu_device->handle, dfu_device->interface );
                             retries = 4;
                         } else {
-                            DEBUG( "Failed to claim the DFU interface.\n" );
+                            DEBUG( "Failed to claim the DFU interface. libusb_claim_interface err_code %d\n", err_code );
                         }
                     } else {
-                        DEBUG( "Failed to set configuration.\n" );
+                        DEBUG( "Failed to set configuration. libusb_set_configuration err_code %d\n", err_code );
                     }
 
                     libusb_close(dfu_device->handle);
+                } else {
+                  DEBUG("Could not open found device, libusb_open error code: %d\n", err_code);
                 }
             }
         }
